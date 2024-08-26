@@ -16,18 +16,32 @@ echo "Installing Dependencies..."
 sudo apt-get update -y
 sudo apt-get install -y wget gpg
 
-# Import Microsoft GPG key
-echo "Importing Microsoft GPG Key..."
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-sudo install -o root -g root -m 644 packages.microsoft.gpg /usr/share/keyrings/
-rm -f packages.microsoft.gpg
-
-# Add Visual Studio Code repository
-echo "Adding Visual Studio Code Repository..."
-sudo sh -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
-
-# Update package list and install Visual Studio Code
+# Update package list and install dependencies
+echo "Updating package list and installing dependencies..."
 sudo apt-get update -y
+sudo apt-get install -y wget gpg
+
+# Download the latest Visual Studio Code .deb package
+echo "Downloading Visual Studio Code .deb package..."
+wget -q https://go.microsoft.com/fwlink/?LinkID=760868 -O "$HOME/Downloads/vscode.deb" || { echo "Failed to download Visual Studio Code .deb package"; exit 1; }
+
+# Install the .deb package
+echo "Installing Visual Studio Code..."
+sudo apt-get install -y "$HOME/Downloads/vscode.deb"
+
+# Clean up by removing the downloaded .deb file
+rm vscode.deb
+
+# Verify the installation
+if command -v code &> /dev/null; then
+    echo "Visual Studio Code installed successfully."
+else
+    echo "Error: Visual Studio Code installation failed."
+    exit 1
+fi
+
+# Update the package list
+sudo apt-get update -y || { echo "Failed to update package list"; exit 1; }
 sudo apt-get install -y code
 
 # Configure auto-linting on save and other settings
@@ -95,7 +109,7 @@ extensions=(
 )
 
 for extension in "${extensions[@]}"; do
-    code --install-extension "$extension"
+    code --install-extension "$extension" --force || { echo "Failed to install $extension"; }
 done
 
 # Output success message
