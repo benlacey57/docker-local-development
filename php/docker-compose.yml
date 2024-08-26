@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./src:/var/www/html
+    environment:
+      - PHP_VERSION=8.2
+    ports:
+      - "${NGINX_PORT}:80"
+    networks:
+      - php-net
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8081:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - php-net
+
+  db:
+    image: ${DB_ENGINE}:${DB_VERSION}
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: php_app
+      MYSQL_USER: php_user
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - php-net
+
+volumes:
+  db_data:
+
+networks:
+  php-net:

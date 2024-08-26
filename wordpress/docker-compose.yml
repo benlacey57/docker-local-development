@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  wordpress:
+    build: .
+    ports:
+      - "${NGINX_PORT}:80"
+    volumes:
+      - ./src/wp-content:/var/www/html/wp-content
+    networks:
+      - wordpress-net
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8081:80"
+    volumes:
+      - ./src:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - wordpress-net
+
+  db:
+    image: ${DB_ENGINE}:${DB_VERSION}
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - wordpress-net
+
+volumes:
+  db_data:
+
+networks:
+  wordpress-net:

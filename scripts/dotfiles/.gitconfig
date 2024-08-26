@@ -1,0 +1,10 @@
+[user]
+    name = Ben Lacey
+    email = ben.lacey57@gmail.com
+[core]
+    editor = code --wait
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
