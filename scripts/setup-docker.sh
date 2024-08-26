@@ -52,214 +52,43 @@ sudo rm -rf /var/run/docker.sock
 DISTRO=$ID
 VERSION=$VERSION_ID
 
-# Update package list and install dependencies
-echo "Installing Dependencies..."
+# Update the package list and install prerequisites
+echo "Updating package list and installing prerequisites..."
 sudo apt-get update -y || { display_error "Failed to update package list"; }
-sudo apt-get install -y curl git wget uidmap npm || { display_error "Failed to install necessary packages"; }
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common || { display_error "Failed to install prerequisites"; }
 
-# Install Docker in rootless mode
-echo "Installing Docker in Rootless Mode..."
-curl -fsSL https://get.docker.com/rootless | sh || { display_error "Failed to install Docker in rootless mode"; }
+# Add Docker’s official GPG key and set up the stable repository
+echo "Adding Docker's official GPG key and repository..."
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg || { display_error "Failed to add Docker GPG key"; }
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null || { display_error "Failed to add Docker repository"; }
 
-# Add Docker binaries to the user's PATH
-echo 'export PATH=$HOME/bin:$PATH' >> "$HOME/.bashrc"
-export PATH=$HOME/bin:$PATH
+# Update the package list again and install Docker Engine, CLI, and Containerd
+echo "Installing Docker Engine, CLI, and Containerd..."
+sudo apt-get update -y || { display_error "Failed to update package list after adding Docker repository"; }
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io || { display_error "Failed to install Docker"; }
 
-# Install Docker Desktop (based on detected distribution)
-if [[ "$DISTRO" == "ubuntu" || "$DISTRO" == "debian" ]]; then
-    echo "Installing Docker Desktop..."
-    sudo apt-get install -y docker-desktop || { display_error "Failed to install Docker Desktop"; }
+# Enable and start the Docker service
+echo "Enabling and starting Docker service..."
+sudo systemctl enable docker || { display_error "Failed to enable Docker service"; }
+sudo systemctl start docker || { display_error "Failed to start Docker service"; }
+
+# Verify Docker installation
+if ! command -v docker &> /dev/null; then
+    display_error "Docker installation failed."
 else
-    display_error "Unsupported distribution. Please install Docker Desktop manually."
+    echo "Docker installed successfully."
 fi
+
+# Install Docker Desktop (for Ubuntu)
+echo "Installing Docker Desktop..."
+sudo apt-get install -y docker-desktop || { display_error "Failed to install Docker Desktop"; }
 
 # Create Docker directory structure
 echo "Creating Docker Directory Structure..."
-mkdir -p "$HOME/docker/laravel" "$HOME/docker/wordpress" "$HOME/docker/drupal" "$HOME/docker/other" || { display_error "Failed to create Docker directory structure"; }
+mkdir -p "$HOME/docker/platforms/laravel" "$HOME/docker/platforms/wordpress" "$HOME/docker/platforms/drupal" "$HOME/docker/config" || { display_error "Failed to create Docker directory structure"; }
 
-# Create Dockerfiles and docker-compose.yml files for each platform
-
-# Laravel
-cat <<EOL > "$HOME/docker/laravel/Dockerfile"
-FROM php:${PHP_VERSION}-fpm
-RUN docker-php-ext-install pdo pdo_mysql
-WORKDIR /var/www/html
-EOL
-
-cat <<EOL > "$HOME/docker/laravel/docker-compose.yml"
-version: '3.8'
-services:
-  app:
-    build: .
-    volumes:
-      - ./src:/var/www/html
-    environment:
-      - PHP_VERSION=${PHP_VERSION}
-    ports:
-      - "8000:80"
-    networks:
-      - laravel-net
-  nginx:
-    image: ${NGINX_VERSION}
-    ports:
-      - "8080:80"
-    volumes:
-      - ./src:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - laravel-net
-  db:
-    image: mysql:${MYSQL_VERSION}
-    volumes:
-      - db_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE=laravel
-      MYSQL_USER=laravel
-      MYSQL_PASSWORD=${DB_USER_PASSWORD}
-    networks:
-      - laravel-net
-volumes:
-  db_data:
-networks:
-  laravel-net:
-EOL
-
-# WordPress
-cat <<EOL > "$HOME/docker/wordpress/Dockerfile"
-FROM wordpress:${WORDPRESS_VERSION}
-EOL
-
-cat <<EOL > "$HOME/docker/wordpress/docker-compose.yml"
-version: '3.8'
-services:
-  wordpress:
-    build: .
-    ports:
-      - "8080:80"
-    volumes:
-      - ./src/wp-content:/var/www/html/wp-content
-    networks:
-      - wordpress-net
-  nginx:
-    image: ${NGINX_VERSION}
-    ports:
-      - "8081:80"
-    volumes:
-      - ./src:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - wordpress-net
-  db:
-    image: mysql:${MYSQL_VERSION}
-    volumes:
-      - db_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE=wordpress
-      MYSQL_USER=wordpress
-      MYSQL_PASSWORD=${DB_USER_PASSWORD}
-    networks:
-      - wordpress-net
-volumes:
-  db_data:
-networks:
-  wordpress-net:
-EOL
-
-# Drupal
-cat <<EOL > "$HOME/docker/drupal/Dockerfile"
-FROM drupal:${DRUPAL_VERSION}
-EOL
-
-cat <<EOL > "$HOME/docker/drupal/docker-compose.yml"
-version: '3.8'
-services:
-  drupal:
-    build: .
-    ports:
-      - "8080:80"
-    volumes:
-      - ./src:/var/www/html/modules/custom
-    networks:
-      - drupal-net
-  nginx:
-    image: ${NGINX_VERSION}
-    ports:
-      - "8082:80"
-    volumes:
-      - ./src:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - drupal-net
-  db:
-    image: mysql:${MYSQL_VERSION}
-    volumes:
-      - db_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE=drupal
-      MYSQL_USER=drupal
-      MYSQL_PASSWORD=${DB_USER_PASSWORD}
-    networks:
-      - drupal-net
-volumes:
-  db_data:
-networks:
-  drupal-net:
-EOL
-
-# Other platform
-cat <<EOL > "$HOME/docker/other/Dockerfile"
-# Base Dockerfile for other platforms. Modify as needed.
-FROM ubuntu:latest
-RUN apt-get update && apt-get install -y \
-    php \
-    nginx \
-    mysql-client
-WORKDIR /var/www/html
-EOL
-
-cat <<EOL > "$HOME/docker/other/docker-compose.yml"
-version: '3.8'
-services:
-  app:
-    build: .
-    volumes:
-      - ./src:/var/www/html
-    ports:
-      - "8083:80"
-    networks:
-      - other-net
-  nginx:
-    image: ${NGINX_VERSION}
-    ports:
-      - "8084:80"
-    volumes:
-      - ./src:/var/www/html
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - other-net
-  db:
-    image: mysql:${MYSQL_VERSION}
-    volumes:
-      - db_data:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE=other
-      MYSQL_USER=other
-      MYSQL_PASSWORD=${DB_USER_PASSWORD}
-    networks:
-      - other-net
-volumes:
-  db_data:
-networks:
-  other-net:
-EOL
-
-# Create the NGINX configuration file for default site
-mkdir -p "$HOME/docker/nginx" || { display_error "Failed to create NGINX configuration directory"; }
-cat <<EOL > "$HOME/docker/nginx/default.conf"
+# Create the NGINX configuration file
+cat <<EOL > "$HOME/docker/config/nginx.conf"
 server {
     listen 80;
     server_name localhost;
@@ -282,9 +111,157 @@ server {
 }
 EOL
 
+# Create the PHP configuration file
+cat <<EOL > "$HOME/docker/config/php.ini"
+[PHP]
+error_reporting = E_ALL
+display_errors = On
+display_startup_errors = On
+log_errors = On
+error_log = /var/log/php_errors.log
+
+[Date]
+date.timezone = UTC
+EOL
+
+# Create Dockerfiles and docker-compose.yml files for each platform
+
+# Laravel
+cat <<EOL > "$HOME/docker/platforms/laravel/Dockerfile"
+FROM php:${PHP_VERSION}-fpm
+RUN docker-php-ext-install pdo pdo_mysql
+WORKDIR /var/www/html
+EOL
+
+cat <<EOL > "$HOME/docker/platforms/laravel/docker-compose.yml"
+version: '3.8'
+services:
+  app:
+    build: .
+    volumes:
+      - ./src:/var/www/html
+      - ../../config/php.ini:/usr/local/etc/php/conf.d/php.ini
+    environment:
+      - PHP_VERSION=${PHP_VERSION}
+    ports:
+      - "8000:80"
+    networks:
+      - laravel-net
+  nginx:
+    image: ${NGINX_VERSION}
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+      - ../../config/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - laravel-net
+  db:
+    image: mysql:${MYSQL_VERSION}
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE=laravel
+      MYSQL_USER=laravel
+      MYSQL_PASSWORD=${DB_USER_PASSWORD}
+    networks:
+      - laravel-net
+volumes:
+  db_data:
+networks:
+  laravel-net:
+EOL
+
+# WordPress
+cat <<EOL > "$HOME/docker/platforms/wordpress/Dockerfile"
+FROM wordpress:${WORDPRESS_VERSION}
+EOL
+
+cat <<EOL > "$HOME/docker/platforms/wordpress/docker-compose.yml"
+version: '3.8'
+services:
+  wordpress:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src/wp-content:/var/www/html/wp-content
+      - ../../config/php.ini:/usr/local/etc/php/conf.d/php.ini
+    networks:
+      - wordpress-net
+  nginx:
+    image: ${NGINX_VERSION}
+    ports:
+      - "8081:80"
+    volumes:
+      - ./src:/var/www/html
+      - ../../config/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - wordpress-net
+  db:
+    image: mysql:${MYSQL_VERSION}
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE=wordpress
+      MYSQL_USER=wordpress
+      MYSQL_PASSWORD=${DB_USER_PASSWORD}
+    networks:
+      - wordpress-net
+volumes:
+  db_data:
+networks:
+  wordpress-net:
+EOL
+
+# Drupal
+cat <<EOL > "$HOME/docker/platforms/drupal/Dockerfile"
+FROM drupal:${DRUPAL_VERSION}
+EOL
+
+cat <<EOL > "$HOME/docker/platforms/drupal/docker-compose.yml"
+version: '3.8'
+services:
+  drupal:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html/modules/custom
+      - ../../config/php.ini:/usr/local/etc/php/conf.d/php.ini
+    networks:
+      - drupal-net
+  nginx:
+    image: ${NGINX_VERSION}
+    ports:
+      - "8082:80"
+    volumes:
+      - ./src:/var/www/html
+      - ../../config/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - drupal-net
+  db:
+    image: mysql:${MYSQL_VERSION}
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE=drupal
+      MYSQL_USER=drupal
+      MYSQL_PASSWORD=${DB_USER_PASSWORD}
+    networks:
+      - drupal-net
+volumes:
+  db_data:
+networks:
+  drupal-net:
+EOL
+
 echo ""
 echo "Build Docker images for Laravel, WordPress, Drupal with this command:"
-echo "cd ~/docker/laravel && docker build -t laravel-base ."
+echo "cd ~/docker/platforms/laravel && docker build -t laravel-base ."
 echo ""
 
 # Output success message
