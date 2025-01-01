@@ -1,0 +1,16 @@
+{
+  "thumbnail_size": {
+    "width": 150,
+    "height": 150,
+    "crop": true
+  },
+  "medium_size": {
+    "width": 300,
+    "height": 300
+  },
+  "large_size": {
+    "width": 1024,
+    "height": 1024
+  },
+  "uploads_use_yearmonth_folders": true
+}
