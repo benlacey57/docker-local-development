@@ -1,0 +1,38 @@
+{
+  "slug": "hampshire",
+  "name": "Hampshire",
+  "excerpt": "A picturesque county in southern England.",
+  "content": "content/hampshire.md",
+  "meta_title": "Hampshire - Explore Stunning Countryside and Vibrant Towns",
+  "meta_description": "Discover Hampshire, a county in southern England known for its countryside, cultural heritage, and bustling towns like Winchester and Southampton.",
+  "google_maps_link": "https://goo.gl/maps/example",
+  "wikipedia_page": "https://en.wikipedia.org/wiki/Hampshire",
+  "schema_entities": [
+    {
+      "type": "Place",
+      "name": "Hampshire",
+      "description": "A county in southern England known for its natural beauty and historical significance."
+    },
+    {
+      "type": "AdministrativeArea",
+      "name": "Hampshire County Council",
+      "description": "The governing body for Hampshire."
+    }
+  ],
+  "landmarks": [
+    {
+      "name": "Winchester Cathedral",
+      "description": "One of the largest cathedrals in Europe, known for its impressive Gothic architecture."
+    },
+    {
+      "name": "New Forest National Park",
+      "description": "A beautiful park with free-roaming ponies, scenic trails, and wildlife."
+    },
+    {
+      "name": "Portsmouth Historic Dockyard",
+      "description": "A maritime museum featuring historic ships like HMS Victory and the Mary Rose."
+    }
+  ],
+  "primary_keyword": "Hampshire",
+  "secondary_keywords": ["Hampshire history", "Hampshire attractions", "southern England", "Winchester", "Southampton"]
+}
