@@ -1,0 +1,18 @@
+{
+  "site_name": "Local WordPress Site",
+  "site_url": "http://localhost",
+  "admin_user": "admin",
+  "admin_password": "admin",
+  "admin_email": "admin@example.com",
+  "theme_name": "astra",
+  "plugins": [
+    "admin-columns",
+    "seo-by-rank-math",
+    "advanced-custom-fields",
+    "wordpress-site-enhancements",
+    "wpforms-lite",
+    "google-site-kit",
+    "cloudflare",
+    "spectra"
+  ]
+}
