@@ -1,0 +1,44 @@
+{
+  "name": "Roller Garage Doors",
+  "description": "High-quality roller garage doors for homes and businesses, offering security and style.",
+  "services": [
+    {
+      "name": "Residential Garage Doors",
+      "description": "Stylish and secure garage doors for your home.",
+      "keywords": ["home garage doors", "residential security"],
+      "benefits": [
+        "Enhanced home security",
+        "Stylish designs to match your home"
+      ],
+      "children": [
+        {
+          "name": "Automatic Doors",
+          "description": "Convenient automatic garage door systems.",
+          "keywords": ["automatic garage doors"],
+          "benefits": [
+            "Ease of use",
+            "Modern technology integration"
+          ]
+        },
+        {
+          "name": "Manual Doors",
+          "description": "Affordable manual garage door options.",
+          "keywords": ["manual garage doors"],
+          "benefits": [
+            "Cost-effective",
+            "Reliable and simple operation"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Commercial Garage Doors",
+      "description": "Heavy-duty garage doors for businesses.",
+      "keywords": ["commercial garage doors", "business security"],
+      "benefits": [
+        "Durable materials",
+        "Enhanced security for commercial properties"
+      ]
+    }
+  ]
+}
