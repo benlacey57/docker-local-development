@@ -1,0 +1,5 @@
+{
+  "permalink_structure": "/blog/%postname%/",
+  "category_base": "blog/category",
+  "tag_base": "blog/tag"
+}
