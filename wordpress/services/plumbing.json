@@ -1,0 +1,44 @@
+{
+  "name": "Plumbing Services",
+  "description": "Professional plumbing solutions for residential and commercial properties.",
+  "services": [
+    {
+      "name": "Residential Plumbing",
+      "description": "Efficient plumbing services for homes.",
+      "keywords": ["home plumbing", "pipe repair", "leak fixing"],
+      "benefits": [
+        "Quick and reliable service",
+        "Experienced professionals"
+      ],
+      "children": [
+        {
+          "name": "Emergency Plumbing",
+          "description": "24/7 emergency plumbing services.",
+          "keywords": ["emergency plumber", "urgent plumbing"],
+          "benefits": [
+            "Rapid response",
+            "Minimized water damage"
+          ]
+        },
+        {
+          "name": "Bathroom Plumbing",
+          "description": "Installation and repair of bathroom fixtures.",
+          "keywords": ["bathroom plumbing", "shower installation"],
+          "benefits": [
+            "Expert fixture installation",
+            "Seamless plumbing solutions"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Commercial Plumbing",
+      "description": "Comprehensive plumbing solutions for businesses.",
+      "keywords": ["commercial plumbing", "industrial plumbing"],
+      "benefits": [
+        "Tailored for business needs",
+        "Durable and long-lasting repairs"
+      ]
+    }
+  ]
+}
