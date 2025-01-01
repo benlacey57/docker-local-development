@@ -1,0 +1,54 @@
+{
+  "name": "Marketing Services",
+  "description": "Expert marketing services to help businesses reach their target audience and achieve measurable results.",
+  "services": [
+    {
+      "name": "SEO",
+      "description": "Search Engine Optimization services to improve your website's visibility and rankings.",
+      "keywords": ["SEO", "search engine optimization", "organic traffic"],
+      "benefits": [
+        "Higher search engine rankings",
+        "Increased website traffic",
+        "Better online visibility"
+      ],
+      "children": [
+        {
+          "name": "Local SEO",
+          "description": "Optimized strategies for ranking higher in local search results.",
+          "keywords": ["local SEO", "geo-targeted keywords"],
+          "benefits": [
+            "Attract local customers",
+            "Improve business visibility in your area"
+          ]
+        },
+        {
+          "name": "Technical SEO",
+          "description": "Ensure your site meets technical requirements for search engines.",
+          "keywords": ["site speed", "mobile-first indexing"],
+          "benefits": [
+            "Improved site performance",
+            "Better crawlability by search engines"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Social Media Marketing",
+      "description": "Create and manage social media campaigns to engage with your audience.",
+      "keywords": ["social media", "campaigns", "engagement"],
+      "benefits": [
+        "Increased brand awareness",
+        "Enhanced audience interaction"
+      ]
+    },
+    {
+      "name": "Content Marketing",
+      "description": "Develop content strategies that resonate with your target audience.",
+      "keywords": ["blogging", "content creation"],
+      "benefits": [
+        "Build authority in your niche",
+        "Drive organic traffic"
+      ]
+    }
+  ]
+}
