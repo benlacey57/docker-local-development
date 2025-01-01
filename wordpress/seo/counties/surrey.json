@@ -1,0 +1,38 @@
+{
+  "slug": "surrey",
+  "name": "Surrey",
+  "excerpt": "A beautiful county in southeast England, known for its rolling hills and historic landmarks.",
+  "content": "content/surrey/index.md",
+  "meta_title": "Surrey - Discover Rolling Hills and Historic Landmarks",
+  "meta_description": "Explore Surrey, a picturesque county in southeast England known for its natural beauty, historic towns, and vibrant culture.",
+  "google_maps_link": "https://goo.gl/maps/example",
+  "wikipedia_page": "https://en.wikipedia.org/wiki/Surrey",
+  "schema_entities": [
+    {
+      "type": "Place",
+      "name": "Surrey",
+      "description": "A county in southeast England renowned for its scenic countryside and historic sites."
+    },
+    {
+      "type": "AdministrativeArea",
+      "name": "Surrey County Council",
+      "description": "The local governing body for Surrey."
+    }
+  ],
+  "landmarks": [
+    {
+      "name": "Box Hill",
+      "description": "A famous beauty spot in the Surrey Hills offering stunning views and walking trails."
+    },
+    {
+      "name": "Guildford Castle",
+      "description": "A historic Norman castle with panoramic views of Guildford and beyond."
+    },
+    {
+      "name": "Hampton Court Palace",
+      "description": "A grand Tudor palace with beautiful gardens and rich royal history."
+    }
+  ],
+  "primary_keyword": "Surrey",
+  "secondary_keywords": ["Surrey attractions", "Surrey Hills", "historic landmarks", "southeast England"]
+}
