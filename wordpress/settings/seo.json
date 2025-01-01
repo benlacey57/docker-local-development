@@ -1,0 +1,18 @@
+{
+  "meta_title_template": "%title% - %sitename%",
+  "meta_description_template": "",
+  "schema": {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Local SEO Experts",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 High Street",
+      "addressLocality": "Winchester",
+      "addressRegion": "Hampshire",
+      "postalCode": "SO23 8UF",
+      "addressCountry": "UK"
+    },
+    "telephone": "+44 123 456 7890"
+  }
+}
