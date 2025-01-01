@@ -1,0 +1,9 @@
+{
+  "default_comment_status": "closed",
+  "thread_comments": true,
+  "thread_comments_depth": 3,
+  "default_ping_status": "closed",
+  "comment_moderation": true,
+  "comment_whitelist": false,
+  "moderation_keys": ["spam", "offensive"]
+}
